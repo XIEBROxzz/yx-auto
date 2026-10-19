@@ -1,7 +1,7 @@
-#saas.sin.fan
-#cf.cnno.de
-#cdn.cnno.de
-#cf.ddeed.de
-#cdn.ddeed.de
-#p.etime.vip
-#iris77.cf.090227.xyz
+saas.sin.fan:443#saas.sin.fan
+cf.cnno.de:443#cf.cnno.de
+cdn.cnno.de:443#cdn.cnno.de
+cf.ddeed.de:443#cf.ddeed.de
+cdn.ddeed.de:443#cdn.ddeed.de
+p.etime.vip:443#p.etime.vip
+iris77.cf.090227.xyz:443#iris77.cf.090227.xyz
