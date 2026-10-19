@@ -1430,7 +1430,7 @@ function generateHomePage(scuValue) {
             }
         }
 
-        ['domain', 'uuid', 'customPath'].forEach(function (fieldId) {
+        ['domain', 'uuid', 'customPath', 'nodeLinkInput'].forEach(function (fieldId) {
             const el = document.getElementById(fieldId);
             if (!el) return;
             el.addEventListener('paste', function (e) {
@@ -1439,9 +1439,10 @@ function generateHomePage(scuValue) {
                 if (txt && nodePrefixRe.test(txt.trim())) {
                     e.preventDefault();
                     autoParseNodeLink(txt.trim());
+                    if (fieldId === 'nodeLinkInput') el.value = '';
                 }
             });
-
+        });
 
         function autoFillFromNodeLink() {
             const raw = (document.getElementById('nodeLinkInput') || {}).value || '';
