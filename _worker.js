@@ -1233,54 +1233,54 @@ function generateHomePage(scuValue) {
             </div>
             
             <div class="form-group" style="margin-top: 24px;">
-                <label>协议选择</label>
-                <div style="margin-top: 8px;">
-                    <div class="list-item" onclick="toggleSwitch('switchVL')">
-                        <div>
-                            <div class="list-item-label">VLESS (vl)</div>
-                        </div>
-                        <div class="switch active" id="switchVL"></div>
-                    </div>
-                    <div class="list-item" onclick="toggleSwitch('switchTJ')">
-                        <div>
-                            <div class="list-item-label">Trojan (tj)</div>
-                        </div>
-                        <div class="switch" id="switchTJ"></div>
-                    </div>
-                    <div class="list-item" onclick="toggleSwitch('switchVM')">
-                        <div>
-                            <div class="list-item-label">VMess (vm)</div>
-                        </div>
-                        <div class="switch" id="switchVM"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group" style="margin-top: 24px;">
                 <label>客户端选择</label>
                 <div class="result-url" id="clientSubscriptionUrl" style="display: none; margin-top: 8px; padding: 12px; background: rgba(0, 122, 255, 0.1); border-radius: 8px; font-size: 13px; color: #007aff; word-break: break-all;"></div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 12px;">
+                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'V2RAY')">V2RAY</button>
+                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'V2RAYNG')">V2RAYNG</button>
+                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'NEKORAY')">NEKORAY</button>
+                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'Shadowrocket')" style="font-size: 13px;">Shadowrocket</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('clash', 'CLASH')">CLASH</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('clash', 'STASH')">STASH</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('surge', 'SURGE')">SURGE</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('sing-box', 'SING-BOX')">SING-BOX</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('loon', 'LOON')">LOON</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('quanx', 'QUANTUMULT X')" style="font-size: 13px;">QUANTUMULT X</button>
-                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'V2RAY')">V2RAY</button>
-                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'V2RAYNG')">V2RAYNG</button>
-                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'NEKORAY')">NEKORAY</button>
-                    <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'Shadowrocket')" style="font-size: 13px;">Shadowrocket</button>
                 </div>
             </div>
             
             <div class="list-item" onclick="toggleAdvanced()" style="margin-top: 24px;">
                 <div>
                     <div class="list-item-label">高级设置</div>
-                    <div class="list-item-description">优选开关、IP版本、运营商、仅TLS、ECH</div>
+                    <div class="list-item-description">协议选择、优选开关、IP版本、运营商、仅TLS、ECH</div>
                 </div>
                 <div id="advancedArrow" style="font-size: 17px; color: #86868b; transition: transform 0.2s ease;">▾</div>
             </div>
             <div id="advancedGroup" style="display: none; margin-top: 4px;">
+                <div class="form-group">
+                    <label>协议选择</label>
+                    <div style="margin-top: 8px;">
+                        <div class="list-item" onclick="toggleSwitch('switchVL')">
+                            <div>
+                                <div class="list-item-label">VLESS (vl)</div>
+                            </div>
+                            <div class="switch active" id="switchVL"></div>
+                        </div>
+                        <div class="list-item" onclick="toggleSwitch('switchTJ')">
+                            <div>
+                                <div class="list-item-label">Trojan (tj)</div>
+                            </div>
+                            <div class="switch" id="switchTJ"></div>
+                        </div>
+                        <div class="list-item" onclick="toggleSwitch('switchVM')">
+                            <div>
+                                <div class="list-item-label">VMess (vm)</div>
+                            </div>
+                            <div class="switch" id="switchVM"></div>
+                        </div>
+                    </div>
+                    <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">粘贴节点链接后按链接协议自动切换，一般无需手动改</small>
+                </div>
                 <div class="list-item" onclick="toggleSwitch('switchDomain')">
                     <div>
                         <div class="list-item-label">启用优选域名</div>
@@ -1393,6 +1393,7 @@ function generateHomePage(scuValue) {
                     if (tlsEl) tlsEl.classList.add('active');
                 }
             }
+            if (typeof renderDefaultV2Url === 'function') renderDefaultV2Url();
         }
         
         // ===== 布局折叠控制 =====
@@ -1416,6 +1417,45 @@ function generateHomePage(scuValue) {
             g.style.display = show ? 'block' : 'none';
             const arr = document.getElementById('advancedArrow');
             if (arr) arr.style.transform = show ? 'rotate(180deg)' : '';
+        }
+        
+        // ===== 默认V2订阅链接预览（未被用户点击的链接覆盖时自动刷新） =====
+        function renderDefaultV2Url() {
+            const box = document.getElementById('clientSubscriptionUrl');
+            if (!box) return;
+            if (box.dataset.default !== '1' && box.style.display === 'block') return;
+            const domain = document.getElementById('domain').value.trim();
+            const uuid = document.getElementById('uuid').value.trim();
+            if (!domain || !uuid) return;
+            if (!switches.switchVL && !switches.switchTJ && !switches.switchVM) return;
+            const customPath = document.getElementById('customPath').value.trim() || '/';
+            const baseUrl = new URL(window.location.href).origin;
+            let u = baseUrl + '/' + uuid + '/sub?domain=' + encodeURIComponent(domain)
+                + '&epd=' + (switches.switchDomain ? 'yes' : 'no')
+                + '&epi=' + (switches.switchIP ? 'yes' : 'no')
+                + '&egi=' + (switches.switchGitHub ? 'yes' : 'no');
+            const githubUrlVal = document.getElementById('githubUrl').value.trim();
+            if (githubUrlVal) u += '&piu=' + encodeURIComponent(githubUrlVal);
+            if (switches.switchVL) u += '&ev=yes';
+            if (switches.switchTJ) u += '&et=yes';
+            if (switches.switchVM) u += '&mess=yes';
+            if (!document.getElementById('ipv4Enabled').checked) u += '&ipv4=no';
+            if (!document.getElementById('ipv6Enabled').checked) u += '&ipv6=no';
+            if (!document.getElementById('ispMobile').checked) u += '&ispMobile=no';
+            if (!document.getElementById('ispUnicom').checked) u += '&ispUnicom=no';
+            if (!document.getElementById('ispTelecom').checked) u += '&ispTelecom=no';
+            if (switches.switchTLS) u += '&dkby=yes';
+            if (switches.switchECH) {
+                u += '&ech=yes';
+                const dnsVal = document.getElementById('customDNS') && document.getElementById('customDNS').value.trim();
+                if (dnsVal) u += '&customDNS=' + encodeURIComponent(dnsVal);
+                const echDomainVal = document.getElementById('customECHDomain') && document.getElementById('customECHDomain').value.trim();
+                if (echDomainVal) u += '&customECHDomain=' + encodeURIComponent(echDomainVal);
+            }
+            if (customPath && customPath !== '/') u += '&path=' + encodeURIComponent(customPath);
+            box.textContent = u;
+            box.style.display = 'block';
+            box.dataset.default = '1';
         }
         
         // 订阅转换地址（从服务器注入）
@@ -1454,7 +1494,7 @@ function generateHomePage(scuValue) {
                 document.getElementById('uuid').value = uuid;
                 document.getElementById('domain').value = domainVal;
                 document.getElementById('customPath').value = pathVal || '/';
-                setManualVisible(true);
+                renderDefaultV2Url();
                 const switchMap = { VL: 'switchVL', TJ: 'switchTJ', VM: 'switchVM' };
                 ['VL', 'TJ', 'VM'].forEach(function (p) {
                     if (switches[switchMap[p]] !== (p === proto)) toggleSwitch(switchMap[p]);
@@ -1478,6 +1518,14 @@ function generateHomePage(scuValue) {
                     autoParseNodeLink(txt.trim());
                     if (fieldId === 'nodeLinkInput') el.value = '';
                 }
+            });
+        });
+
+        ['domain', 'uuid', 'customPath', 'githubUrl'].forEach(function (fieldId) {
+            const el = document.getElementById(fieldId);
+            if (!el) return;
+            el.addEventListener('input', function () {
+                if (typeof renderDefaultV2Url === 'function') renderDefaultV2Url();
             });
         });
 
@@ -1605,6 +1653,7 @@ function generateHomePage(scuValue) {
                 const urlElement = document.getElementById('clientSubscriptionUrl');
                 urlElement.textContent = finalUrl;
                 urlElement.style.display = 'block';
+                urlElement.dataset.default = '0';
                 
                 if (clientName === 'V2RAY') {
                     navigator.clipboard.writeText(finalUrl).then(() => {
@@ -1639,6 +1688,7 @@ function generateHomePage(scuValue) {
                 const urlElement = document.getElementById('clientSubscriptionUrl');
                 urlElement.textContent = finalUrl;
                 urlElement.style.display = 'block';
+                urlElement.dataset.default = '0';
                 
                 if (clientType === 'clash') {
                     if (clientName === 'STASH') {
