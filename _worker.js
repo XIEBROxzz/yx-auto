@@ -1247,6 +1247,7 @@ function generateHomePage(scuValue) {
                     <button type="button" class="client-btn" onclick="generateClientLink('loon', 'LOON')">LOON</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('quanx', 'QUANTUMULT X')" style="font-size: 13px;">QUANTUMULT X</button>
                 </div>
+                <small style="display: block; margin-top: 10px; color: #86868b; font-size: 13px;">提示：v2rayNG 拉起导入后若列表无节点，请进入分组点「更新订阅」或重启 App（新版 v2rayNG 官方行为）</small>
             </div>
             
             <div class="list-item" onclick="toggleAdvanced()" style="margin-top: 24px;">
