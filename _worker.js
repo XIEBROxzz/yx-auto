@@ -1202,47 +1202,31 @@ function generateHomePage(scuValue) {
             <div class="form-group">
                 <label>节点链接自动识别</label>
                 <input type="text" id="nodeLinkInput" placeholder="粘贴 vless:// / trojan:// / vmess:// 完整节点链接" style="font-size: 15px;">
-                <button type="button" class="btn" onclick="autoFillFromNodeLink()" style="margin-top: 12px;">识别并填入</button>
-                <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">手机端直接粘贴完整节点链接，点一下按钮即可自动填入下方三格</small>
-            </div>
-            <div class="form-group">
-                <label>域名</label>
-                <input type="text" id="domain" placeholder="请输入您的域名">
-            </div>
-            
-            <div class="form-group">
-                <label>UUID/Password</label>
-                <input type="text" id="uuid" placeholder="请输入UUID或Password">
-            </div>
-            
-            <div class="form-group">
-                <label>WebSocket路径（可选）</label>
-                <input type="text" id="customPath" placeholder="留空则使用默认路径 /" value="/">
-                <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">自定义WebSocket路径，例如：/v2ray 或 /</small>
-            </div>
-            
-            <div class="list-item" onclick="toggleSwitch('switchDomain')">
-                <div>
-                    <div class="list-item-label">启用优选域名</div>
+                <div style="display: flex; gap: 10px; margin-top: 12px;">
+                    <button type="button" class="btn" onclick="autoFillFromNodeLink()" style="flex: 1; margin-top: 0;">识别并填入</button>
+                    <button type="button" class="btn btn-secondary" id="manualToggleBtn" onclick="toggleManualFields()" style="flex: 1; margin-top: 0;">手动填写域名/UUID/路径</button>
                 </div>
-                <div class="switch active" id="switchDomain"></div>
+                <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">粘贴完整节点链接，点「识别并填入」自动填入三格；默认收起，手填请点右边按钮</small>
             </div>
-            
-            <div class="list-item" onclick="toggleSwitch('switchIP')">
-                <div>
-                    <div class="list-item-label">启用优选IP</div>
+            <div id="manualFieldsGroup" style="display: none; margin-top: 4px;">
+                <div class="form-group">
+                    <label>域名</label>
+                    <input type="text" id="domain" placeholder="请输入您的域名">
                 </div>
-                <div class="switch active" id="switchIP"></div>
-            </div>
-            
-            <div class="list-item" onclick="toggleSwitch('switchGitHub')">
-                <div>
-                    <div class="list-item-label">启用GitHub优选</div>
+                
+                <div class="form-group">
+                    <label>UUID/Password</label>
+                    <input type="text" id="uuid" placeholder="请输入UUID或Password">
                 </div>
-                <div class="switch active" id="switchGitHub"></div>
+                
+                <div class="form-group">
+                    <label>WebSocket路径（可选）</label>
+                    <input type="text" id="customPath" placeholder="留空则使用默认路径 /" value="/">
+                    <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">自定义WebSocket路径，例如：/v2ray 或 /</small>
+                </div>
             </div>
             
-            <div class="form-group" id="githubUrlGroup" style="margin-top: 12px;">
+            <div class="form-group" style="margin-top: 16px;">
                 <label>GitHub优选URL（可选）</label>
                 <input type="text" id="githubUrl" placeholder="留空则使用默认地址" style="font-size: 15px;">
                 <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">自定义优选IP列表来源URL，留空则使用默认地址</small>
@@ -1274,7 +1258,8 @@ function generateHomePage(scuValue) {
             
             <div class="form-group" style="margin-top: 24px;">
                 <label>客户端选择</label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 8px;">
+                <div class="result-url" id="clientSubscriptionUrl" style="display: none; margin-top: 8px; padding: 12px; background: rgba(0, 122, 255, 0.1); border-radius: 8px; font-size: 13px; color: #007aff; word-break: break-all;"></div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 12px;">
                     <button type="button" class="client-btn" onclick="generateClientLink('clash', 'CLASH')">CLASH</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('clash', 'STASH')">STASH</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('surge', 'SURGE')">SURGE</button>
@@ -1286,62 +1271,91 @@ function generateHomePage(scuValue) {
                     <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'NEKORAY')">NEKORAY</button>
                     <button type="button" class="client-btn" onclick="generateClientLink('v2ray', 'Shadowrocket')" style="font-size: 13px;">Shadowrocket</button>
                 </div>
-                <div class="result-url" id="clientSubscriptionUrl" style="display: none; margin-top: 12px; padding: 12px; background: rgba(0, 122, 255, 0.1); border-radius: 8px; font-size: 13px; color: #007aff; word-break: break-all;"></div>
             </div>
             
-            <div class="form-group">
-                <label>IP版本选择</label>
-                <div style="display: flex; gap: 16px; margin-top: 8px;">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="ipv4Enabled" checked>
-                        <span>IPv4</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="ipv6Enabled" checked>
-                        <span>IPv6</span>
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>运营商选择</label>
-                <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="ispMobile" checked>
-                        <span>移动</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="ispUnicom" checked>
-                        <span>联通</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="ispTelecom" checked>
-                        <span>电信</span>
-                    </label>
-                </div>
-            </div>
-            
-            <div class="list-item" onclick="toggleSwitch('switchTLS')" style="margin-top: 8px;">
+            <div class="list-item" onclick="toggleAdvanced()" style="margin-top: 24px;">
                 <div>
-                    <div class="list-item-label">仅TLS节点</div>
-                    <div class="list-item-description">启用后只生成带TLS的节点，不生成非TLS节点（如80端口）</div>
+                    <div class="list-item-label">高级设置</div>
+                    <div class="list-item-description">优选开关、IP版本、运营商、仅TLS、ECH</div>
                 </div>
-                <div class="switch active" id="switchTLS"></div>
+                <div id="advancedArrow" style="font-size: 17px; color: #86868b; transition: transform 0.2s ease;">▾</div>
             </div>
-            
-            <div class="list-item" onclick="toggleSwitch('switchECH')" style="margin-top: 8px;">
-                <div>
-                    <div class="list-item-label">ECH (Encrypted Client Hello)</div>
-                    <div class="list-item-description">启用后节点链接将携带 ECH 参数，需客户端支持；开启时自动仅TLS</div>
+            <div id="advancedGroup" style="display: none; margin-top: 4px;">
+                <div class="list-item" onclick="toggleSwitch('switchDomain')">
+                    <div>
+                        <div class="list-item-label">启用优选域名</div>
+                    </div>
+                    <div class="switch active" id="switchDomain"></div>
                 </div>
-                <div class="switch" id="switchECH"></div>
-            </div>
-            <div class="form-group" id="echOptionsGroup" style="margin-top: 12px; display: none;">
-                <label>ECH 自定义 DNS（可选）</label>
-                <input type="text" id="customDNS" placeholder="例如: https://dns.joeyblog.eu.org/joeyblog" style="font-size: 14px;">
-                <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">用于 ECH 配置查询的 DoH 地址</small>
-                <label style="margin-top: 12px; display: block;">ECH 域名（可选）</label>
-                <input type="text" id="customECHDomain" placeholder="例如: cloudflare-ech.com" style="font-size: 14px;">
+                
+                <div class="list-item" onclick="toggleSwitch('switchIP')">
+                    <div>
+                        <div class="list-item-label">启用优选IP</div>
+                    </div>
+                    <div class="switch active" id="switchIP"></div>
+                </div>
+                
+                <div class="list-item" onclick="toggleSwitch('switchGitHub')">
+                    <div>
+                        <div class="list-item-label">启用GitHub优选</div>
+                    </div>
+                    <div class="switch active" id="switchGitHub"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>IP版本选择</label>
+                    <div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ipv4Enabled" checked>
+                            <span>IPv4</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ipv6Enabled" checked>
+                            <span>IPv6</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>运营商选择</label>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ispMobile" checked>
+                            <span>移动</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ispUnicom" checked>
+                            <span>联通</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ispTelecom" checked>
+                            <span>电信</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="list-item" onclick="toggleSwitch('switchTLS')" style="margin-top: 8px;">
+                    <div>
+                        <div class="list-item-label">仅TLS节点</div>
+                        <div class="list-item-description">启用后只生成带TLS的节点，不生成非TLS节点（如80端口）</div>
+                    </div>
+                    <div class="switch active" id="switchTLS"></div>
+                </div>
+                
+                <div class="list-item" onclick="toggleSwitch('switchECH')" style="margin-top: 8px;">
+                    <div>
+                        <div class="list-item-label">ECH (Encrypted Client Hello)</div>
+                        <div class="list-item-description">启用后节点链接将携带 ECH 参数，需客户端支持；开启时自动仅TLS</div>
+                    </div>
+                    <div class="switch" id="switchECH"></div>
+                </div>
+                <div class="form-group" id="echOptionsGroup" style="margin-top: 12px; display: none;">
+                    <label>ECH 自定义 DNS（可选）</label>
+                    <input type="text" id="customDNS" placeholder="例如: https://dns.joeyblog.eu.org/joeyblog" style="font-size: 14px;">
+                    <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">用于 ECH 配置查询的 DoH 地址</small>
+                    <label style="margin-top: 12px; display: block;">ECH 域名（可选）</label>
+                    <input type="text" id="customECHDomain" placeholder="例如: cloudflare-ech.com" style="font-size: 14px;">
+                </div>
             </div>
         </div>
         
@@ -1381,6 +1395,28 @@ function generateHomePage(scuValue) {
             }
         }
         
+        // ===== 布局折叠控制 =====
+        function setManualVisible(show) {
+            const g = document.getElementById('manualFieldsGroup');
+            if (!g) return;
+            g.style.display = show ? 'block' : 'none';
+            const b = document.getElementById('manualToggleBtn');
+            if (b) b.textContent = show ? '收起手动填写' : '手动填写域名/UUID/路径';
+        }
+        
+        function toggleManualFields() {
+            const g = document.getElementById('manualFieldsGroup');
+            setManualVisible(!g || g.style.display === 'none');
+        }
+        
+        function toggleAdvanced() {
+            const g = document.getElementById('advancedGroup');
+            if (!g) return;
+            const show = g.style.display === 'none';
+            g.style.display = show ? 'block' : 'none';
+            const arr = document.getElementById('advancedArrow');
+            if (arr) arr.style.transform = show ? 'rotate(180deg)' : '';
+        }
         
         // 订阅转换地址（从服务器注入）
         const SUB_CONVERTER_URL = "${ scu }";
@@ -1418,6 +1454,7 @@ function generateHomePage(scuValue) {
                 document.getElementById('uuid').value = uuid;
                 document.getElementById('domain').value = domainVal;
                 document.getElementById('customPath').value = pathVal || '/';
+                setManualVisible(true);
                 const switchMap = { VL: 'switchVL', TJ: 'switchTJ', VM: 'switchVM' };
                 ['VL', 'TJ', 'VM'].forEach(function (p) {
                     if (switches[switchMap[p]] !== (p === proto)) toggleSwitch(switchMap[p]);
