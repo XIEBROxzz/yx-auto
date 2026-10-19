@@ -1200,6 +1200,12 @@ function generateHomePage(scuValue) {
         
         <div class="card">
             <div class="form-group">
+                <label>节点链接自动识别</label>
+                <input type="text" id="nodeLinkInput" placeholder="粘贴 vless:// / trojan:// / vmess:// 完整节点链接" style="font-size: 15px;">
+                <button type="button" class="btn" onclick="autoFillFromNodeLink()" style="margin-top: 12px;">识别并填入</button>
+                <small style="display: block; margin-top: 6px; color: #86868b; font-size: 13px;">手机端直接粘贴完整节点链接，点一下按钮即可自动填入下方三格</small>
+            </div>
+            <div class="form-group">
                 <label>域名</label>
                 <input type="text" id="domain" placeholder="请输入您的域名">
             </div>
@@ -1320,7 +1326,7 @@ function generateHomePage(scuValue) {
                     <div class="list-item-label">仅TLS节点</div>
                     <div class="list-item-description">启用后只生成带TLS的节点，不生成非TLS节点（如80端口）</div>
                 </div>
-                <div class="switch" id="switchTLS"></div>
+                <div class="switch active" id="switchTLS"></div>
             </div>
             
             <div class="list-item" onclick="toggleSwitch('switchECH')" style="margin-top: 8px;">
@@ -1356,7 +1362,7 @@ function generateHomePage(scuValue) {
             switchVL: true,
             switchTJ: false,
             switchVM: false,
-            switchTLS: false,
+            switchTLS: true,
             switchECH: false
         };
         
@@ -1435,7 +1441,16 @@ function generateHomePage(scuValue) {
                     autoParseNodeLink(txt.trim());
                 }
             });
-        });
+
+
+        function autoFillFromNodeLink() {
+            const raw = (document.getElementById('nodeLinkInput') || {}).value || '';
+            const text = raw.trim();
+            if (!text) { alert('请先粘贴完整节点链接'); return; }
+            if (autoParseNodeLink(text)) {
+                document.getElementById('nodeLinkInput').value = '';
+            }
+        }
 
         function tryOpenApp(schemeUrl, fallbackCallback, timeout) {
             timeout = timeout || 2500;
