@@ -1379,6 +1379,64 @@ function generateHomePage(scuValue) {
         // 订阅转换地址（从服务器注入）
         const SUB_CONVERTER_URL = "${ scu }";
         
+        // ===== 自定义功能：粘贴节点链接自动识别填充 =====
+        function autoParseNodeLink(rawText) {
+            const text = (rawText || '').trim();
+            const isVless = /^vless:\/\//i.test(text);
+            const isTrojan = /^trojan:\/\//i.test(text);
+            const isVMess = /^vmess:\/\//i.test(text);
+            if (!text || (!isVless && !isTrojan && !isVMess)) return false;
+            let uuid = '', domainVal = '', pathVal = '/', proto = 'VL', name = '';
+            try {
+                if (isVMess) {
+                    let b64 = text.slice(8).trim();
+                    if (b64.length % 4 !== 0) b64 = b64 + '='.repeat(4 - b64.length % 4);
+                    const o = JSON.parse(decodeURIComponent(escape(atob(b64))));
+                    uuid = String(o.id || '').trim();
+                    domainVal = String(o.host || '').trim() || String(o.add || '').trim();
+                    pathVal = String(o.path || '') || '/';
+                    proto = 'VM';
+                    name = String(o.ps || '').trim();
+                } else {
+                    const u = new URL(text);
+                    uuid = decodeURIComponent(u.username || '').trim();
+                    domainVal = (u.searchParams.get('host') || u.searchParams.get('sni') || u.hostname).trim();
+                    pathVal = u.searchParams.get('path') || '/';
+                    proto = isTrojan ? 'TJ' : 'VL';
+                    name = decodeURIComponent((text.split('#')[1] || '').trim());
+                }
+                if (!uuid || !domainVal) {
+                    alert('无法识别该节点（缺少凭据或域名）');
+                    return true;
+                }
+                document.getElementById('uuid').value = uuid;
+                document.getElementById('domain').value = domainVal;
+                document.getElementById('customPath').value = pathVal || '/';
+                const switchMap = { VL: 'switchVL', TJ: 'switchTJ', VM: 'switchVM' };
+                ['VL', 'TJ', 'VM'].forEach(function (p) {
+                    if (switches[switchMap[p]] !== (p === proto)) toggleSwitch(switchMap[p]);
+                });
+                alert('已自动识别: ' + (name || domainVal) + '\\n域名: ' + domainVal + '\\nUUID/密码: ' + uuid + '\\n路径: ' + (pathVal || '/'));
+                return true;
+            } catch (err) {
+                alert('节点链接解析失败，请检查格式');
+                return true;
+            }
+        }
+        
+        ['domain', 'uuid', 'customPath'].forEach(function (fieldId) {
+            const el = document.getElementById(fieldId);
+            if (!el) return;
+            el.addEventListener('paste', function (e) {
+                let txt = '';
+                try { txt = (e.clipboardData || window.clipboardData).getData('text') || ''; } catch (err2) { return; }
+                if (txt && /^(vless|trojan|vmess):\/\//i.test(txt.trim())) {
+                    e.preventDefault();
+                    autoParseNodeLink(txt.trim());
+                }
+            });
+        });
+        
         function tryOpenApp(schemeUrl, fallbackCallback, timeout) {
             timeout = timeout || 2500;
             let appOpened = false;
