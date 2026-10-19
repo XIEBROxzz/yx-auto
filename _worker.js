@@ -1449,6 +1449,8 @@ function generateHomePage(scuValue) {
             if (!text) { alert('请先粘贴完整节点链接'); return; }
             if (autoParseNodeLink(text)) {
                 document.getElementById('nodeLinkInput').value = '';
+            } else {
+                alert('没有识别到节点链接，请粘贴 vless:// / trojan:// / vmess:// 开头的完整链接');
             }
         }
 
