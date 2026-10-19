@@ -1673,14 +1673,14 @@ function generateHomePage(scuValue) {
                         alert(displayName + ' 订阅链接已复制');
                     });
                 } else if (clientName === 'Shadowrocket') {
-                    schemeUrl = 'shadowrocket://add/' + encodeURIComponent(finalUrl);
+                    schemeUrl = 'shadowrocket://add/sub://' + encodeURIComponent(btoa(finalUrl)) + '?remarks=yx-auto';
                     tryOpenApp(schemeUrl, () => {
                         navigator.clipboard.writeText(finalUrl).then(() => {
                             alert(displayName + ' 订阅链接已复制');
                         });
                     });
                 } else if (clientName === 'V2RAYNG') {
-                    schemeUrl = 'v2rayng://install?url=' + encodeURIComponent(finalUrl);
+                    schemeUrl = 'v2rayng://install-sub?url=' + encodeURIComponent(finalUrl);
                     tryOpenApp(schemeUrl, () => {
                         navigator.clipboard.writeText(finalUrl).then(() => {
                             alert(displayName + ' 订阅链接已复制');
@@ -1705,7 +1705,7 @@ function generateHomePage(scuValue) {
                 
                 if (clientType === 'clash') {
                     if (clientName === 'STASH') {
-                        schemeUrl = 'stash://install?url=' + encodeURIComponent(finalUrl);
+                        schemeUrl = 'stash://install-config?url=' + encodeURIComponent(finalUrl);
                         displayName = 'STASH';
                     } else {
                         schemeUrl = 'clash://install-config?url=' + encodeURIComponent(finalUrl);
@@ -1715,13 +1715,14 @@ function generateHomePage(scuValue) {
                     schemeUrl = 'surge:///install-config?url=' + encodeURIComponent(finalUrl);
                     displayName = 'SURGE';
                 } else if (clientType === 'sing-box') {
-                    schemeUrl = 'sing-box://install-config?url=' + encodeURIComponent(finalUrl);
+                    schemeUrl = 'sing-box://import-remote-profile?url=' + encodeURIComponent(finalUrl);
                     displayName = 'SING-BOX';
                 } else if (clientType === 'loon') {
-                    schemeUrl = 'loon://install?url=' + encodeURIComponent(finalUrl);
+                    schemeUrl = 'loon://import?sub=' + encodeURIComponent(finalUrl);
                     displayName = 'LOON';
                 } else if (clientType === 'quanx') {
-                    schemeUrl = 'quantumult-x://install-config?url=' + encodeURIComponent(finalUrl);
+                    const qjson = '{"server_remote": ["' + finalUrl + ', tag=yx-auto"]}';
+                    schemeUrl = 'quantumult-x:///add-resource?remote-resource=' + encodeURIComponent(qjson);
                     displayName = 'QUANTUMULT X';
                 }
                 
