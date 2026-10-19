@@ -1541,6 +1541,15 @@ function generateHomePage(scuValue) {
         }
 
         function tryOpenApp(schemeUrl, fallbackCallback, timeout) {
+            // 电脑端没有对应App，不尝试协议跳转，直接复制订阅链接
+            const ua = navigator.userAgent || '';
+            const isMobile = /Android|iPhone|iPod|HarmonyOS|IEMobile|BlackBerry|Opera Mini/i.test(ua)
+                || /iPad/i.test(ua)
+                || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+            if (!isMobile) {
+                if (fallbackCallback) fallbackCallback();
+                return;
+            }
             timeout = timeout || 2500;
             let appOpened = false;
             let callbackExecuted = false;
@@ -1564,20 +1573,24 @@ function generateHomePage(scuValue) {
             
             document.addEventListener('visibilitychange', hiddenHandler);
             
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.style.width = '1px';
-            iframe.style.height = '1px';
-            iframe.src = schemeUrl;
-            document.body.appendChild(iframe);
+            // 直接顶层跳转拉起App；隐藏iframe会被 Chrome 等浏览器拦截自定义协议，
+            // 导致 App 永远无法被调起
+            try {
+                window.location.href = schemeUrl;
+            } catch (e) {
+                const aTag = document.createElement('a');
+                aTag.href = schemeUrl;
+                document.body.appendChild(aTag);
+                aTag.click();
+                document.body.removeChild(aTag);
+            }
             
             setTimeout(() => {
-                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                window.removeEventListener('blur', blurHandler);
-                document.removeEventListener('visibilitychange', hiddenHandler);
-                
                 if (!callbackExecuted) {
                     callbackExecuted = true;
+                    window.removeEventListener('blur', blurHandler);
+                    document.removeEventListener('visibilitychange', hiddenHandler);
+                    
                     if (!appOpened && fallbackCallback) {
                         fallbackCallback();
                     }
