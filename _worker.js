@@ -32,8 +32,8 @@ const directDomains = [
     { domain: "xn--b6gac.eu.org" }
 ];
 
-// 默认优选IP来源URL
-const defaultIPURL = 'https://raw.githubusercontent.com/qwer-search/bestip/refs/heads/main/kejilandbestip.txt';
+// 默认优选IP来源URL（自维护列表: bestip.txt 于本仓库）
+const defaultIPURL = 'https://raw.githubusercontent.com/XIEBROxzz/yx-auto/main/bestip.txt';
 
 // UUID验证
 function isValidUUID(str) {
